@@ -1,6 +1,7 @@
 module.exports = function ({api ,models, Users, Threads, Currencies }) {
     const logger = require("../../utils/log.js");
    	const moment = require("moment");
+
     return function ({ event }) {
         const timeStart = Date.now()
         const time = moment.tz("Asia/Ho_Chi_minh").format("HH:MM:ss L");
@@ -11,9 +12,6 @@ module.exports = function ({api ,models, Users, Threads, Currencies }) {
         senderID = String(senderID);
         threadID = String(threadID);
         if (userBanned.has(senderID)|| threadBanned.has(threadID) || allowInbox == ![] && senderID == threadID) return;
-        
-        if (require('fs').existsSync(process.cwd()+'/modules/commands/shortcut.js'))require(process.cwd()+'/modules/commands/shortcut.js').events({ api, event, models, Users, Threads, Currencies });
-        
         for (const [key, value] of events.entries()) {
             if (value.config.eventType.indexOf(event.logMessageType) !== -1) {
                 const eventRun = events.get(key);
