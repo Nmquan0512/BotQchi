@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 2,
   credits: "ManhG",
   description: "Xem danh sách ban của nhóm hoặc của người dùng",
-  commandCategory: "Admin",
+  commandCategory: "Hệ Thống",
   usages: "[thread/user]",
   cooldowns: 5
 };
@@ -20,7 +20,7 @@ module.exports.handleReply = async function ({ api, args, Users, handleReply, ev
         var msg = "";
         var uidS = "";
         var strS = "";
-        var modules = "------ UNBAN ------\n"
+        var modules = "------- Unban -------\n"
         var nums = arrnum.map(n => parseInt(n));
         for (let num of nums) {
           var myString = handleReply.listBanned[num - 1];
@@ -34,14 +34,14 @@ module.exports.handleReply = async function ({ api, args, Users, handleReply, ev
           data.dateAdded = null;
           await Threads.setData(uid, { data });
           var typef = global.data.threadBanned.delete(uid, 1);
-          msg += typef + ' ' + myString + "\n\n";
+          msg += typef + ' ' + myString + "\n";
           uidS += ' ' + uid + "\n";
           strS += ' ' + str + "\n";
         }
-        //console.log(modules, msg);
-        api.sendMessage(`✅ Nhóm của bạn đã được admin gỡ ban`, uidS, () =>
+        console.log(modules, msg);
+        api.sendMessage(`»Thông báo từ Admin ${name}«\n\n-Nhóm ${strS} của bạn đã được Gỡ Ban\n\n-Có thể sử dụng được bot ngay bây giờ`, uidS, () =>
           api.sendMessage(`${global.data.botID}`, () =>
-            api.sendMessage(`✅ Thực thi Unban(true/false)\n\n${msg}`, event.threadID, () =>
+            api.sendMessage(`★★Thực thi Unban(true/false)★★\n\n${msg}`, event.threadID, () =>
               api.unsendMessage(handleReply.messageID))));
       }
       break;
@@ -52,7 +52,7 @@ module.exports.handleReply = async function ({ api, args, Users, handleReply, ev
         var msg = "";
         var uidS = "";
         var strS = "";
-        var modules = "------ UNBAN ------\n"
+        var modules = "------- Unban -------\n"
         var nums = arrnum.map(n => parseInt(n));
 
         for (let num of nums) {
@@ -74,8 +74,8 @@ module.exports.handleReply = async function ({ api, args, Users, handleReply, ev
         }
         //console.log(modules, msg);
         //api.sendMessage(`»Thông báo từ Admin ${name}«\n\n ${strS} \n\nBạn Đã Được Gỡ Ban để có thể tiếp tục sử dụng bot`, uidS, () =>
-        // api.sendMessage(`${global.data.botID}`, () =>
-        api.sendMessage(`Thực thi Unban (true/false)\n\n${msg}`, event.threadID, () =>
+        //api.sendMessage(`${global.data.botID}`, () =>
+        api.sendMessage(`★★Thực thi Unban(true/false)★★\n\n${msg}`, event.threadID, () =>
           api.unsendMessage(handleReply.messageID));
       }
       break;
@@ -104,13 +104,13 @@ module.exports.run = async function ({ event, api, Users, args, Threads }) {
           var modules = "ThreadBan: "
           //console.log(modules, nameT)
           listBanned.push(`${i++}. ${nameT}\n🔰TID: ${singleThread}`);
-          
-          listbanViews.push(`${j++}. ${nameT}\n🔰TID: ${singleThread}\n📋Lý do: ${reason}\n⏱Time: ${date}`);
-          
+
+          listbanViews.push(`${j++}. ${nameT}\n🔰TID: ${singleThread}\n🤷‍♀️Lý do: ${reason}\n_Time: ${date}`);
+
         };
 
-        return api.sendMessage(listbanViews.length != 0 ? api.sendMessage(`Hiện gồm có ${listbanViews.length} nhóm bị ban\n\n${listbanViews.join("\n\n")}` +
-          "\n\nReply tin nhắn này + stt có thể rep nhiều số, cách nhau bằng dấu cách nếu muốn unban thread tương ứng.",
+        return api.sendMessage(listbanViews.length != 0 ? api.sendMessage(`🐳Hiện tại đang có ${listbanViews.length} nhóm bị ban\n\n${listbanViews.join("\n")}` +
+          "\n\nReply tin nhắn này + số thứ tự, có thể rep nhiều số, cách nhau bằng dấu cách để unban thread tương ứng",
           threadID, (error, info) => {
             client.handleReply.push({
               name: this.config.name,
@@ -121,7 +121,7 @@ module.exports.run = async function ({ event, api, Users, args, Threads }) {
             });
           },
           messageID
-        ) : "❎ Hiện tại không có nhóm nào bị ban.", threadID, messageID);
+        ) : "Hiện tại không có nhóm nào bị ban!", threadID, messageID);
       }
     case "user":
     case "u":
@@ -136,14 +136,14 @@ module.exports.run = async function ({ event, api, Users, args, Threads }) {
           const reason = await global.data.userBanned.get(singleUser).reason;
           const date = await global.data.userBanned.get(singleUser).dateAdded;
 
-          listbanViews.push(`${i++}. ${name} \n🔰UID: ${singleUser}\n📋Lý do: ${reason}\n⏱Time: ${date}`);
+          listbanViews.push(`${i++}. ${name} \n🔰UID: ${singleUser}\n🤷‍♀️Lý do: ${reason}\n_Time: ${date}`);
 
           listBanned.push(`${j++}. ${name} \n🔰UID: ${singleUser}`);
-          
+
           //console.log(modules, name)
         }
-        return api.sendMessage(listbanViews.length != 0 ? api.sendMessage(`Hiện tai gồm có ${listbanViews.length} 𝗻gười dùng bị ban\n\n${listbanViews.join("\n\n")}` +
-          "\n\nReply tin nhắn này + stt có thể rep nhiều số, cách nhau bằng dấu cách nếu muốn unban thread tương ứng.",
+        return api.sendMessage(listbanViews.length != 0 ? api.sendMessage(`🐳Hiện tại đang có ${listbanViews.length} người dùng bị ban\n\n${listbanViews.join("\n")}` +
+          "\n\nReply tin nhắn này + số thứ tự, có thể rep nhiều số, cách nhau bằng dấu cách để unban user tương ứng",
           threadID, (error, info) => {
             global.client.handleReply.push({
               name: this.config.name,
@@ -154,7 +154,7 @@ module.exports.run = async function ({ event, api, Users, args, Threads }) {
             });
           },
           messageID
-        ) : "❎ Hiện tại không có người dùng nào bị ban.", threadID, messageID);
+        ) : "Hiện tại không có người dùng bị ban", threadID, messageID);
       }
 
     default:

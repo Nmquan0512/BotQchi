@@ -1,4 +1,3 @@
-/1/
 const axios = require('axios');
 const fs = require('fs');
 
@@ -6,10 +5,10 @@ module.exports = {
     config: {
         name: 'note',
         version: '0.0.1',
-        hasPermssion: 2,
+        hasPermssion: 3,
         credits: 'Niio-team (DC-Nam)',
         description: 'https://niiozic.site/note/:UUID',
-        commandCategory: 'Admin',
+        commandCategory: 'Hệ Thống',
         usages: '[]',
         cooldowns: 3,
     },
@@ -43,7 +42,7 @@ module.exports = {
                 await axios.put(url_redirect.href);
                 url_redirect.searchParams.delete('raw');
                 //url_redirect.searchParams.append('raw', 'true');
-                return send(`📝 Raw: ${url_redirect.href}\n\n✏️ Edit: ${url_raw.href}\n\n🔗 File: ${path}\n\n📌 Thả cảm xúc để upload code`).then(res=> {
+                return send(`📝 Raw: ${url_redirect.href}\n\n✏️ Edit: ${url_raw.href}\n────────────────\n• File: ${path}\n\n📌 Thả cảm xúc để upload code`).then(res=> {
                     res = {
                         ...res,
                         name,
@@ -69,11 +68,11 @@ module.exports = {
 
             switch (_.action) {
                 case 'confirm_replace_content': {
-                    const data = (await axios.get(_.url, {
-                        responseType: 'arraybuffer',
+                    const content = (await axios.get(_.url, {
+                        responseType: 'text',
                     })).data;
 
-                    fs.writeFileSync(_.path, data);
+                    fs.writeFileSync(_.path, content);
                     send(`✅ Đã upload code thành công\n\n🔗 File: ${_.path}`).then(res=> {
                         res = {
                             ..._,

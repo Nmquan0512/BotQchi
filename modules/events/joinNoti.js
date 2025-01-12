@@ -1,122 +1,94 @@
- module.exports.config = {
+module.exports.config = {
   name: "joinNoti",
   eventType: ["log:subscribe"],
   version: "1.0.1",
-  credits: "HĐGN",
-  description: "Thông báo Bot hoặc người dùng vào nhóm có random gif/ảnh/video",
+  credits: "Mirai Team",
+  description: "Thông báo bot hoặc người vào nhóm",
   dependencies: {
-    "fs-extra": "",
-    "path": "",
-    "pidusage": ""
+    "fs-extra": ""
   }
 };
-const fs = require("fs"), axios = require('axios'), request = require('request');
-let data = [
-      "526214684778630",
-      "526220108111421",
-      "526220308111401",
-      "526220484778050",
-      "526220691444696",
-      "526220814778017",
-      "526220978111334",
-      "526221104777988",
-      "526221318111300",
-      "526221564777942",
-      "526221711444594",
-      "526221971444568",
-      "526220108111421",
-      "526220308111401",
-      "526220484778050",
-      "526220691444696",
-      "526220814778017",
-      "526220978111334",
-      "526221104777988",
-      "526221318111300",
-      "526221564777942",
-      "526221711444594",
-      "526221971444568"
-];
-let sticker = data[Math.floor(Math.random() * data.length)];
-module.exports.run = async function({ api, event, Users, Threads, handleReply }) {
-  const moment = require("moment-timezone");
-  const timeNow = moment.tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY | HH:mm:ss");
-  const timeStart = Date.now();
-  const t = process.uptime(); 
-  var h = Math.floor(t / (60 * 60));
-	var p = Math.floor((t % (60 * 60)) / 60);
-	var s = Math.floor(t % 60);
-  const attachment = (await global.nodemodule["axios"]({
-            url: (await global.nodemodule["axios"]('https://niiozic.site/girl-video')).data.url,
-            method: "GET",
-            responseType: "stream"
-        })).data;
-   var fullYear = global.client.getTime("fullYear");
-  	var getHours = await global.client.getTime("hours");
-			var session = `${getHours < 3 ? "đêm khuya" : getHours < 8 ? "buổi sáng sớm" : getHours < 12 ? "buổi trưa" : getHours < 17 ? "buổi chiều" : getHours < 23 ? "buổi tối" : "đêm khuya"}`
+
+module.exports.run = async function({ api, event, Users }) {
   const { threadID } = event;
-  let threadinfo = await api.getThreadInfo(event.threadID);
-  let a = threadinfo.threadName;
-  let commands = client.commands.values();
-  var thu = moment.tz('Asia/Ho_Chi_Minh').format('dddd');
-  if (thu == 'Sunday') thu = 'Chủ Nhật'
-  if (thu == 'Monday') thu = 'Thứ Hai'
-  if (thu == 'Tuesday') thu = 'Thứ Ba'
-  if (thu == 'Wednesday') thu = 'Thứ Tư'
-  if (thu == "Thursday") thu = 'Thứ Năm'
-  if (thu == 'Friday') thu = 'Thứ Sáu'
-  if (thu == 'Saturday') thu = 'Thứ Bảy'
-  const threadSetting = (await Threads.getData(String(event.threadID))).data || {};
-   const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
-  let thread = global.data.threadData.get(event.threadID) || {};
-  if (typeof thread["join"] == "undefined", thread["join"] == false) return;
+
   if (event.logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) {
-    api.changeNickname(`[ ${prefix} ] • ${(!global.config.BOTNAME) ? "BOT" : global.config.BOTNAME}`, threadID, api.getCurrentUserID());
-    setTimeout(() =>
-api.sendMessage("🔄 Đang kết nối vui lòng chờ...", threadID), 1000)
-setTimeout(() => {
-api.sendMessage({sticker: sticker}, event.threadID);
-      }, 5500)
-setTimeout(() =>
-api.sendMessage(`✅ Kết nối thành công`, threadID),  5000)
-setTimeout(() =>
-api.sendMessage({body:`📝 Cập Nhật Thông Tin Box: ${a}\n⏰ Bây giờ là: ${global.client.getTime("fullTime")}`,attachment},threadID), 7600)
-}
-  else {
+    api.changeNickname(`[ ${global.config.PREFIX} ] • ${(!global.config.BOTNAME) ? "Made by CatalizCS and SpermLord" : global.config.BOTNAME}`, threadID, api.getCurrentUserID());
+    api.sendMessage(`[𝐊𝐞̂́𝐭 𝐍𝐨̂́𝐢 𝐓𝐡𝐚̀𝐧𝐡 𝐂𝐨̂𝐧𝐠]`, threadID);
+  } else {
     try {
-      const { mainPath } = global.client
-      const pathE = mainPath + '/modules/commands/data/dataEvent.json'
-      const dataE = JSON.parse(fs.readFileSync(pathE));
-      const findT = dataE.join.find(i => i.threadID === threadID)
-      if(findT) {
-      if(!findT.status) return
-      }
-      let { threadName, participantIDs } = await api.getThreadInfo(threadID);
-      const moment = require("moment-timezone");
-      const hours = moment.tz("Asia/Ho_Chi_Minh").format("HH");
-      const time = moment.tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY | HH:mm:ss");
-      const threadData = global.data.threadData.get(parseInt(threadID)) || {};
-      var mentions = [], nameArray = [], memLength = [], iduser = [], i = 0;
-      for (id in event.logMessageData.addedParticipants) {
-        const userName = event.logMessageData.addedParticipants[id].fullName; iduser.push(event.logMessageData.addedParticipants[id].userFbId.toString());
+      const { createReadStream, existsSync, mkdirSync } = global.nodemodule["fs-extra"];
+      const { threadName, participantIDs } = await api.getThreadInfo(threadID);
+
+      const nameArray = [];
+      const mentions = [];
+      const memLength = [];
+      let i = 0;
+
+      for (const id in event.logMessageData.addedParticipants) {
+        const userName = event.logMessageData.addedParticipants[id].fullName;
         nameArray.push(userName);
-        mentions.push({ tag: userName, id: event.senderID });
-memLength.push(participantIDs.length - i++);
+        mentions.push({ tag: userName, id });
+        memLength.push(participantIDs.length - i++);
+
+        if (!global.data.allUserID.includes(id)) {
+          await Users.createData(id, { name: userName, data: {} });
+          global.data.userName.set(id, userName);
+          global.data.allUserID.push(id);
+        }
       }
       memLength.sort((a, b) => a - b);
-      (typeof threadData.customJoin == "undefined") ? msg = "[ Thành Viên Tham Gia  ]\n\n👤 Name: {name}\n🔗 Link: https://www.facebook.com/profile.php?id={iduser}\n📝 {type} là thành viên thứ {soThanhVien} của nhóm: {threadName}\n✏️ Được thêm vào nhóm bởi: {author}\n🔗 Link: https://www.facebook.com/profile.php?id={uidAuthor}\n\n⏰ Time: {time}" : msg = threadData.customJoin;
-      var nameAuthor = await Users.getNameUser(event.author)
+
+      const threadData = global.data.threadData.get(parseInt(threadID)) || {};
+      let msg = "";
+
+      if (typeof threadData.customJoin === "undefined") {
+        msg = `✿——————————————✿\n𝐗𝐢𝐧 𝐜𝐡𝐚̀𝐨: [ {name} ]\n𝐂𝐡𝐚̀𝐨 𝐦𝐮̛̀𝐧𝐠 𝐛𝐚̣𝐧 𝐝̄𝐞̂́𝐧 𝐯𝐨̛́𝐢: [ {threadName} ]\n𝐁𝐚̣𝐧 𝐥𝐚̀ 𝐭𝐡𝐚̀𝐧𝐡 𝐯𝐢𝐞̂𝐧 𝐬𝐨̂́: [ {soThanhVien} ]\n𝐃̄𝐮̛𝐨̛̣𝐜 𝐭𝐡𝐞̂𝐦 𝐛𝐨̛̉𝐢: [ {author} ]\n𝐂𝐡𝐮́𝐜 𝐛𝐚̣𝐧 𝐜𝐨́ 𝐦𝐨̣̂𝐭 𝐧𝐠𝐚̀𝐲 𝐯𝐮𝐢 𝐯𝐞̉ 💝\n✿——————————————✿`;
+      } else {
+        msg = threadData.customJoin;
+      }
+
+      const getData = await Users.getData(event.author);
+      const nameAuthor = typeof getData.name === "undefined" ? "link join" : getData.name;
+
+      const time = require("moment-timezone").tz("Asia/Ho_Chi_Minh");
+      const gio = time.format("HH");
+      const moment = require("moment-timezone");
+      const bok = moment.tz("Asia/Ho_Chi_Minh").format("DD/MM/YYYY" || "HH:mm:ss");
+
+      let get = "";
+      if (gio >= 5) get = "𝐁𝐮𝐨̂̉𝐢 𝐒𝐚́𝐧𝐠";
+      if (gio >= 11) get = "𝐁𝐮𝐨̂̉𝐢 𝐓𝐫𝐮̛𝐚";
+      if (gio >= 14) get = "𝐁𝐮𝐨̂̉𝐢 𝐂𝐡𝐢Ề̀u";
+      if (gio >= 19) get = "𝐁𝐮𝐨̂̉𝐢 𝐓𝐨̂́𝐢";
+
       msg = msg
-        .replace(/\{iduser}/g, iduser.join(', '))
-        .replace(/\{name}/g, nameArray.join(', '))
-        .replace(/\{type}/g, (memLength.length > 1) ? 'Các bạn' : 'Bạn')
-        .replace(/\{soThanhVien}/g, memLength.join(', '))
+        .replace(/\{name}/g, nameArray.join(", "))
+        .replace(/\{type}/g, memLength.length > 1 ? "𝐜𝐚́𝐜 𝐛𝐚̣𝐧" : "𝐛𝐚̣𝐧")
+        .replace(/\{soThanhVien}/g, memLength.join(", "))
         .replace(/\{threadName}/g, threadName)
+        .replace(/\{get}/g, get)
         .replace(/\{author}/g, nameAuthor)
-        .replace(/\{uidAuthor}/g, event.author)
-         .replace(/\{buoi}/g, session)
-        .replace(/\{time}/g, time);
-      a = {body:msg, attachment}
-      return //api.sendMessage(a, threadID);
-    } catch (e) { return console.log(e) };
-}
-}
+        .replace(/\{bok}/g, bok);
+
+      const path = require("path");
+      const pathGif = path.join(__dirname, "cache", "joinGif", `${1}.mp5`);
+
+      if (existsSync(pathGif)) {
+        formPush = { body: msg, attachment: createReadStream(pathGif), mentions };
+      } else {
+        formPush = { body: msg, mentions };
+      }
+
+      if (existsSync(pathGif)) {
+        formPush = { body: msg, attachment: createReadStream(pathGif), mentions };
+      } else {
+        formPush = { body: msg, mentions };
+      }
+
+      return api.sendMessage(formPush, threadID);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+};

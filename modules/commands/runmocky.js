@@ -3,21 +3,23 @@ class Judas {
     return {
       name: "runmocky",
       version: "1.1.2",
-      hasPermssion: 2,
-      credits: "Minh Huy Dev (Loren Bot py)",
+      hasPermssion: 3,
+      credits: "Minh Huy Dev(Loren Bot py)",
       description: "",
-      commandCategory: "Admin",
+      commandCategory: "Hệ Thống",
       usages: "",
-      cooldowns: 0
+      cooldowns: 5
     }
   }
 
-  async run({ event, api, args, Users }) {
+  async run({ event, api, args, Users, permssion }) {
     const axios = require('axios');
     const fs = require('fs');
+     if (permssion != 3) return api.sendMessage( `𝐒𝐮𝐲̣𝐭`, event.threadID, event.messageID)
     var contents = args.join(" ")
     if (!contents) {
-  return api.sendMessage('thiếu dữ liệu text!', event.threadID, event.messageID);
+  return api.sendMessage('➜ Thiếu dữ liệu text!', event.threadID, event.messageID);
+
   }
 if(contents.endsWith(".js")){
  var data = fs.readFile(
@@ -34,7 +36,7 @@ if(contents.endsWith(".js")){
           "expiration": "never"
         }
           ).then(function(response) {
-  return api.sendMessage(`Kết quả: ${response.data.link}`, event.threadID, event.messageID);
+  return api.sendMessage(`➜ Kết quả: ${response.data.link}`, event.threadID, event.messageID);
  })}
         );
         return
@@ -44,7 +46,7 @@ if(contents.endsWith(".js")){
           "content": contents,
           "content_type": "application/json",
           "charset": "UTF-8",
-          "secret": "NguyenMinhHuy",
+          "secret": "Kz Khánh",
           "expiration": "never"
         }
           ).then(function(response) {
@@ -53,4 +55,4 @@ if(contents.endsWith(".js")){
 }
 }
 }
-module.exports = new Judas()
+module.exports = new Judas();

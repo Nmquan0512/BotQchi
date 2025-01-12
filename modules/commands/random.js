@@ -1,27 +1,27 @@
 module.exports.config = {
-	name: "random",
-	version: "1.0.0",
-	hasPermssion: 0,
-	credits: "D-Jukie",
-	description: "Chọn ngẫu nhiên thành viên trong box",
-	commandCategory: "Game",
-	cooldowns: 0
+    name: 'random',
+    version: '1.0.1',
+    hasPermission: 1,
+    credits: 'TatsuYTB',
+    description: 'Random số',
+    commandCategory: 'Công cụ',
+    usages: 'random [số thấp nhất] [số cao nhất]',
+    cooldowns: 0
 };
-module.exports.run = async ({ api, event, args, Users, Currencies }) => {
-	try { const { threadID, messageID, participantIDs, isGroup } = event;
-	const num = parseInt(args[0]) || 1;
-	if(isGroup == false) return api.sendMessage('❎ Vui lòng thực hiện lệnh này ở nhóm', threadID, messageID);
-	const random = participantIDs.sort(function() {
-        return .5 - Math.random();
-    });
-  let data = (await Currencies.getData(event.senderID)).data || {};
-    const members = [];
-    for( let i = 0; i <= num - 1; i++) {
-    	var name = (await Users.getData(random[i])).name;
-    	members.push(name)
-		}
-	return api.sendMessage(`🎉 Người được chọn là: ${members.join(', ')}`, threadID, messageID);
-      } catch (e) {
-    console.log(e)
-      }
-}
+
+module.exports.run = async function({ api, event, args }) {
+    const { threadID, messageID } = event;
+    const min = parseInt(args[0]);
+    const max = parseInt(args[1]);
+
+    if (isNaN(min) || isNaN(max)) {
+        return api.sendMessage('Vui lòng nhập số thấp nhất và số cao nhất hợp lệ.', threadID, messageID);
+    }
+
+    if (min >= max) {
+        return api.sendMessage('Số thấp nhất phải nhỏ hơn số cao nhất.', threadID, messageID);
+    }
+
+    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+    return api.sendMessage(`Kết quả: ${randomNumber}`, threadID, messageID);
+};

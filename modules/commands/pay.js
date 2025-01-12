@@ -2,49 +2,41 @@ module.exports.config = {
   name: "pay",
   version: "1.0.1",
   hasPermssion: 0,
-  credits: "Mirai Team",// mode lại bởi Tiến
+  credits: "Ai code",
   description: "Chuyển tiền của bản thân cho ai đó",
-  commandCategory: "Coin",
-  usages: "tag/reply",
+  commandCategory: "Nhóm",
+  usages: "pay [Tag | Reply] [Coins]",
   cooldowns: 5,
 };
 
 module.exports.run = async ({ event, api, Currencies, args, Users }) => {
-  try {
-    let { threadID, messageID, senderID } = event;
-    const mention = Object.keys(event.mentions)[0];
-    const balance = (await Currencies.getData(senderID)).money;
-    if (!mention && event.messageReply) {
-      const coins = args[0] === 'all' ? balance : !isNaN(args[0]) ? BigInt(args[0]) : args[0]
-      if (isNaN(String(coins))) return api.sendMessage(`❎ Nội dung bạn nhập không phải là 1 con số hợp lệ`, threadID, messageID);
-      const namePay = await Users.getNameUser(event.messageReply.senderID);
-      if (coins > balance || coins < 1n) return api.sendMessage(`❎ Số tiền bạn muốn chuyển lớn hơn số tiền bạn hiện có`, threadID, messageID);
-      return api.sendMessage({ body: '✅ Đã chuyển cho ' + namePay + ` ${formatNumber(coins)}$` }, threadID, async () => {
-        await Currencies.increaseMoney(event.messageReply.senderID, String(coins));
-        Currencies.decreaseMoney(senderID, String(coins))
-      }, messageID);
-    }
-    //let name = event.mentions[mention].split(" ").length
-    if (!mention) return api.sendMessage(`❎ Vui lòng tag người muốn chuyển tiền\nVí dụ: ${global.config.PREFIX}${this.config.name} 100 @Lê Bá Bách`, threadID, messageID);
-    else {
-      const coins = args[0] == 'all' ? balance : !isNaN(args[0]) ? BigInt(args[0]) : args[0]
-      if (!isNaN(String(coins))) {
-        let balance = (await Currencies.getData(senderID)).money;
-        if (coins <= 0) return api.sendMessage('❎ Số tiền bạn muốn chuyển không hợp lệ', threadID, messageID);
-        if (coins > balance) return api.sendMessage('❎ Số tiền bạn muốn chuyển lớn hơn số tiền bạn hiện có!', threadID, messageID);
-        else {
-          return api.sendMessage(`✅ Đã chuyển ${formatNumber(coins)}$ cho ${event.mentions[mention].replace(/@/g, "")}`, threadID, async () => {
-            await Currencies.increaseMoney(mention, String(coins));
-            Currencies.decreaseMoney(senderID, String(coins))
-          }, messageID);
-        }
-      } else return api.sendMessage('❎ Vui lòng nhập số tiền muốn chuyển là 1 số', threadID, messageID);
-    }
-  } catch (e) {
-    console.log(e)
-  }
-}
+  let { threadID, messageID, senderID, messageReply, mentions } = event;
+  let receiveID;
+  let amount;
 
-function formatNumber(number) {
-  return number.toLocaleString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (messageReply) {
+    receiveID = messageReply.senderID;
+    amount = parseInt(args[0]);
+  } else if (Object.keys(mentions).length > 0) {
+    receiveID = Object.keys(mentions)[0];
+    const nameLength = mentions[receiveID].trim().split(/\s+/).length;
+    amount = parseInt(args[nameLength]);
+  } else {
+    return api.sendMessage('Cách dùng:\n»dùng pay + tag + số tiền\n»dùng pay + reply + số tiền', threadID, messageID);
+  }
+
+  if (isNaN(amount) || amount <= 0) {
+    return api.sendMessage(`»Số lượng coins phải là một số và lớn hơn 0.`, threadID, messageID);
+  }
+
+  const senderBalance = (await Currencies.getData(senderID)).money || 0;
+  if (amount > senderBalance) {
+    return api.sendMessage(`»Bạn lấy đâu ra nhiều tiền như thế?`, threadID, messageID);
+  }
+
+  await Currencies.decreaseMoney(senderID, amount);
+  await Currencies.increaseMoney(receiveID, amount);
+
+  const namePay = await Users.getNameUser(receiveID);
+  return api.sendMessage(`Đã chuyển thành công ${amount}$ cho ${namePay}.`, threadID, messageID);
 }

@@ -23,7 +23,7 @@ const fight = (playerPow, monsterPow) => {
 
     const calculateDamage = (attacker, defender) => {
         var damageMultiplier = getDamageMultiplier(attacker);
-        var reducedDef = defender.DEF * 0.75;
+        var reducedDef = defender.DEF * attacker.AP;
         var damage = Math.max((attacker.ATK - reducedDef) * damageMultiplier, 1);
         reducedDef = attacker.ATK - damage
         return {
@@ -31,7 +31,7 @@ const fight = (playerPow, monsterPow) => {
             defender: reducedDef
         }
     };
-    
+
     let currentTurn = getFirstAttack();
 
     while (playerPow.HP > 0 && monsterPow.HP > 0) {

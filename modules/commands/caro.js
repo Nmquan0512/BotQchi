@@ -2,10 +2,10 @@ module.exports.config = {
     name: 'caro',
     version: '1.0.0',
     hasPermssion: 0,
-    credits: 'JRT',
-    description: 'game cờ caro 5x5',
-    commandCategory: 'Game',
-    usages: 'tag người muốn chơi cùng',
+    credits: 'Darkness',
+    description: 'game cờ caro',
+    commandCategory: 'Trò Chơi',
+    usages: '@tag',
     cooldowns: 5,
     dependencies: {
       "fs-extra": "",
@@ -24,24 +24,24 @@ module.exports.handleReply = async ({ handleReply, event, api ,Users}) => {
     var { threadID, senderID, messageID, body } = event;
     const chalk = global.nodemodule["chalk"];
     var args   = body.split(' ');
-    if(!args[1]) return api.sendMessage("❎ Bạn chưa nhập tọa độ Y", threadID, messageID);
+    if(!args[1]) return api.sendMessage("Bạn chưa nhập tọa độ Y", threadID, messageID);
     var toadoX = parseInt(args[0]),
         toadoY = parseInt(args[1]);
           //check error tọa độ
-          if(toadoX == NaN || toadoY == NaN) return api.sendMessage("❎ Tọa độ X hoặc Y không hợp lệ", threadID, messageID);
-          if(toadoX > sizeboard) return api.sendMessage("❎ Tọa độ X không được lớn hơn số ô của bàn cờ", threadID, messageID);
-          if(toadoY > sizeboard) return api.sendMessage("❎ Tọa độ Y không được lớn hơn số ô của bàn cờ", threadID, messageID);
+          if(toadoX == NaN || toadoY == NaN) return api.sendMessage("Tọa độ X hoặc Y không hợp lệ", threadID, messageID);
+          if(toadoX > sizeboard) return api.sendMessage("Tọa độ X không được lớn hơn số ô của bàn cờ", threadID, messageID);
+          if(toadoY > sizeboard) return api.sendMessage("Tọa độ Y không được lớn hơn số ô của bàn cờ", threadID, messageID);
       //get data game
     var gameint  = global.game[threadID];
     var luot     = gameint.ditruoc;
     var luotuser = gameint.luot[senderID];
     //===========
-    if (global.game[threadID].toadogame.includes(toadoX.toString() + toadoY)) return api.sendMessage('❎ Vị trí này đã được đánh từ trước', threadID, messageID);
+    if (global.game[threadID].toadogame.includes(toadoX.toString() + toadoY)) return api.sendMessage('Vị trí này đã được đánh từ trước', threadID, messageID);
 
 var _0xb4b2=["\x6C\x75\x6F\x74","\x6B\x65\x79\x73","\x66\x69\x6C\x74\x65\x72","\x6E\x61\x6D\x65","\x67\x65\x74\x44\x61\x74\x61"];var arrluot=Object[_0xb4b2[1]](gameint[_0xb4b2[0]]);var iddoithu=parseInt(arrluot[_0xb4b2[2]]((_0xd327x3)=>{return _0xd327x3!= senderID}));var namedoithu=( await Users[_0xb4b2[4]](iddoithu))[_0xb4b2[3]]
     //=============Check lượt===========//
     if (luotuser != luot) {
-      return api.sendMessage({body: '❎ Chưa tới lượt của bạn lượt này là của '+namedoithu, mentions: [{tag: namedoithu,id: iddoithu}]}, threadID, messageID);
+      return api.sendMessage({body: 'Chưa tới lượt của bạn!! Lượt này là của '+namedoithu, mentions: [{tag: namedoithu,id: iddoithu}]}, threadID, messageID);
     };
     if (luot == 0) {
         global.game[threadID].ditruoc = 1;
@@ -163,7 +163,7 @@ var _0xb4b2=["\x6C\x75\x6F\x74","\x6B\x65\x79\x73","\x66\x69\x6C\x74\x65\x72","\
     fs.writeFileSync(path2, canvasbg.toBuffer());
       api.unsendMessage(handleReply.messageID, () => {
         api.sendMessage({
-          body: "You win: "+myname,
+          body: "You win 🥳🥳 "+myname,
           attachment: fs.createReadStream(path2),
           mentions: [{
             tag: myname,
@@ -205,20 +205,20 @@ module.exports.run = async ({ event, api, args }) => {
     if (!global.game[threadID]) {
         global.game[threadID] = {};
     };
-    if(args[0] == "end"){
+    if(args[0] == "clear"){
       var author = global.game[threadID].author;
-      if(!author) return api.sendMessage('❎ Chưa có bàn cờ nào được tạo trong nhóm của bạn', threadID, messageID);
-      if (senderID != author) return api.sendMessage('❎ Chỉ có author '+author+' bàn cờ: mới có thể kết thúc bàn cờ này', threadID, messageID);
+      if(!author) return api.sendMessage('Chưa có bàn cờ nào được tạo trong nhóm của bạn', threadID, messageID);
+      if (senderID != author) return api.sendMessage('Chỉ có author '+author+' bàn cờ: mới có thể kết thúc bàn cờ này', threadID, messageID);
       global.game[threadID] = {};
-      return api.sendMessage('✅ Đã xóa bàn caro', threadID, messageID);
+      return api.sendMessage('Đã xóa bàn caro!!', threadID, messageID);
       
     }
     
     if (global.game[threadID].author) {
-        return api.sendMessage(`❎ Nhóm này đã có bàn cờ được tạo, vui lòng kết thúc bàn cờ bằng cách dùng ${global.config.PREFIX}${this.config.name} end`, threadID, messageID);
+        return api.sendMessage('Nhóm này đã có bàn cờ được tạo, vui lòng kết thúc bàn cờ bàng cách chat "$caro clear"', threadID, messageID);
     };
     var player2 = Object.keys(event.mentions)[0];
-    if(!player2) return api.sendMessage("❎ Cần tag người bạn muốn chơi cùng", event.threadID, event.messageID);
+    if(!player2) return api.sendMessage("Cần tag người bạn muốn chơi cùng!!", event.threadID, event.messageID);
     global.game[threadID] = {
         luot: {
             [senderID]: 1,
@@ -303,11 +303,11 @@ module.exports.run = async ({ event, api, args }) => {
     //reg font
     ctxx.fillStyle = "#000000";
     ctxx.textAlign = "center";
-    if(!fs.existsSync(__dirname+'/cache/bold-font.ttf')) {
+    if(!fs.existsSync(__dirname+'/cache/data/bold-font.ttf')) {
       let getfont = (await axios.get("https://drive.google.com/u/0/uc?id=1Kx2hi9VX5X4KjwO1uFR6048fm4dKAMnp&export=download", { responseType: "arraybuffer" })).data;
-      fs.writeFileSync(__dirname+'/cache/bold-font.ttf', Buffer.from(getfont, "utf-8"));
+      fs.writeFileSync(__dirname+'/cache/data/bold-font.ttf', Buffer.from(getfont, "utf-8"));
     };
-    Canvas.registerFont(__dirname+'/cache/bold-font.ttf', {
+    Canvas.registerFont(__dirname+'/cache/data/bold-font.ttf', {
         family: "caro",
         weight: "regular",
         style: "normal"
@@ -336,7 +336,7 @@ module.exports.run = async ({ event, api, args }) => {
     ctxx.drawImage(logoVS, xbground/2-200/2, (320-200)/2, 200, 200);
     //ctxx.drawImage(logoVS, 10,10,200,200);
     fs.writeFileSync(path2, canvasbg.toBuffer());
-    api.sendMessage({body: "✅ Tạo ván cờ caro thành công, bạn đi trước, reply tin nhắn này kèm theo tọa độ X Y để đánh quân cờ, ví dụ:\n1 5", attachment: fs.createReadStream(path2)}, threadID, (e, info) => {
+    api.sendMessage({body: "Tạo ván cờ caro thành công, bạn đi trước, reply tin nhắn này kèm theo tọa độ X Y để đánh quân cờ, ví dụ:\n1 5", attachment: fs.createReadStream(path2)}, threadID, (e, info) => {
             client.handleReply.push({
                 name: this.config.name,
                 author: senderID,

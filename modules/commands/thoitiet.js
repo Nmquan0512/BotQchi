@@ -4,7 +4,7 @@ module.exports.config = {
     hasPermssion: 0,
     credits: "D-Jukie convert từ Goat",
     description: "Xem thời tiết trong 5 ngày",
-    commandCategory: "Tìm kiếm",
+    commandCategory: "Tiện ích",
     usages: "[location]",
     cooldowns: 5
 };
@@ -23,17 +23,17 @@ module.exports.run = async function ({
     if (!area) return api.sendMessage(`Vui lòng nhập địa điểm!`, event.threadID, event.messageID)
     let areaKey, location = {},
         dataWeather;
-    if (!fs.existsSync(__dirname + '/tad/bgweather.jpg')) {
+    if (!fs.existsSync(__dirname + '/cache/bgweather.jpg')) {
         let getbg = (await axios.get(`https://i.imgur.com/1Rx88Te.jpg`, {
             responseType: "arraybuffer"
         })).data;
-        fs.writeFileSync(__dirname + "/tad/bgweather.jpg", Buffer.from(getbg, "utf-8"));
+        fs.writeFileSync(__dirname + "/cache/bgweather.jpg", Buffer.from(getbg, "utf-8"));
     }
-    if (!fs.existsSync(__dirname + "/tad/Play-Bold.ttf")) {
+    if (!fs.existsSync(__dirname + "/cache/Play-Bold.ttf")) {
         let getfont = (await axios.get("https://drive.google.com/u/0/uc?id=1uni8AiYk7prdrC7hgAmezaGTMH5R8gW8&export=download", {
             responseType: "arraybuffer"
         })).data;
-        fs.writeFileSync(__dirname + "/tad/Play-Bold.ttf", Buffer.from(getfont, "utf-8"));
+        fs.writeFileSync(__dirname + "/cache/Play-Bold.ttf", Buffer.from(getfont, "utf-8"));
     };
     try {
         const response = (await axios.get(`https://api.accuweather.com/locations/v1/cities/search.json?q=${encodeURIComponent(area)}&apikey=${apikey}&language=vi-vn`)).data;
@@ -63,8 +63,8 @@ module.exports.run = async function ({
         `\n🏙️ Mặt trăng lặn: ${formatHours(dataWeatherToday.Moon.Set)}` +
         `\n🌞 Ban ngày: ${dataWeatherToday.Day.LongPhrase}` +
         `\n🌙 Ban đêm: ${dataWeatherToday.Night.LongPhrase}`;
-    Canvas.registerFont(__dirname + "/tad/Play-Bold.ttf", { family: "Play-Bold" });
-    const bg = await Canvas.loadImage(__dirname + "/tad/bgweather.jpg");
+    Canvas.registerFont(__dirname + "/cache/Play-Bold.ttf", { family: "Play-Bold" });
+    const bg = await Canvas.loadImage(__dirname + "/cache/bgweather.jpg");
     const {
         width,
         height

@@ -1,46 +1,21 @@
 module.exports.config = {
-    "name": "antiout",
-    "version": "1.1.2",
-    "hasPermssion": 1,
-    "credits": "ProCoderMew fix by Niiozic",
-    "description": "Tự động add lại thành viên out chùa | Không chắc chắn là add lại được tất cả.",
-    "commandCategory": "Nhóm",
-    "usages": "on/off",
-    "cooldowns": 0,
-    "dependencies": {
-        "path": "",
-        "fs-extra": ""
-    }
+    name: "antiout",
+    version: "1.0.0",
+    credits: "DungUwU",
+    hasPermssion: 1,
+    description: "Bật tắt antiout",
+    usages: "antiout on/off",
+    commandCategory: "Nhóm",
+    cooldowns: 0
 };
-module.exports.onLoad = function() {
-    const { writeFileSync, existsSync } = global.nodemodule["fs-extra"];
-    const { resolve } = global.nodemodule["path"];
-    const log = require(process.cwd() + '/utils/log');
-    const path = resolve(__dirname, 'data', 'antiout.json');
-    if (!existsSync(path)) {
-        const obj = {
-            antiout: {}
-        };
-        writeFileSync(path, JSON.stringify(obj, null, 4));
-    } else {
-        const data = require(path);
-        if (!data.hasOwnProperty('antiout')) data.antiout = {};
-        writeFileSync(path, JSON.stringify(data, null, 4));
-    }
-}
-module.exports.run = async function({ api, event }) {
-    const { writeFileSync } = global.nodemodule["fs-extra"];
-    const { resolve } = global.nodemodule["path"];
-    const path = resolve(__dirname, 'data', 'antiout.json');
-    const { threadID, messageID } = event;
-    const database = require(path);
-    const { antiout } = database;
-    if (antiout[threadID] == true) {
-        antiout[threadID] = false;
-        api.sendMessage("✅ Đã tắt thành công chế độ chống out chùa", threadID, messageID);
-    } else {
-        antiout[threadID] = true;
-        api.sendMessage("✅ Đã bật thành công chế độ chống out chùa", threadID, messageID);
-    }
-    writeFileSync(path, JSON.stringify(database, null, 4));
+module.exports.run = async({ api, event, Threads}) => {
+    let data = (await Threads.getData(event.threadID)).data || {};
+    if (typeof data["antiout"] == "undefined" || data["antiout"] == false) data["antiout"] = true;
+    else data["antiout"] = false;
+
+    await Threads.setData(event.threadID, { data });
+    global.data.threadData.set(parseInt(event.threadID), data);
+
+    return api.sendMessage(`𝐃𝐚̃ ${(data["antiout"] == true) ? "𝐛𝐚̣̂𝐭" : "𝐭𝐚̆́𝐭"} 𝐭𝐡𝐚̀𝐧𝐡 𝐜𝐨̂𝐧𝐠 𝐚𝐧𝐭𝐢𝐨𝐮𝐭!`, event.threadID);
+
 }

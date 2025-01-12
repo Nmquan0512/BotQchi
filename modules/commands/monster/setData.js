@@ -40,6 +40,12 @@ function setItem(playerID, data) {
             fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
             
             break;
+        case "buff":
+            user.buffs = null;
+            user.buffs = data;
+            user.bag.splice(user.bag.findIndex(item => item.name == data.name), 1);
+            fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));                
+            break;
         case "food":
             user.the_luc += data.heal;
             user.hp += data.boostHP;
@@ -47,9 +53,21 @@ function setItem(playerID, data) {
             user.def += data.boostDEF;
             user.spd += data.boostSPD;
             user.exp += data.boostEXP;
+            user.karma += data.boostKarma;
+            user.points += data.boostPoints;
             user.bag.splice(user.bag.findIndex(item => item.name == data.name), 1);
             fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
             
+            break;
+        case "upgrade":
+            user.weapon.HP += data.boostHPweapon;
+            user.weapon.ATK += data.boostATKweapon;
+            user.weapon.DEF += data.boostDEFweapon;
+            user.weapon.SPD += data.boostSPDweapon;
+            user.weapon.usage += data.usage;
+            user.bag.splice(user.bag.findIndex(item => item.name == data.name), 1);
+            fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+                
             break;
         default:
             return 403;
@@ -71,6 +89,78 @@ function decreaseDurability(playerID) {
     fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
     
     return user.weapon.durability;
+}
+
+function decreasePoints(playerID, points) {
+    if (typeof playerID !== 'string') {
+        throw new Error('playerID must be a string');
+    }
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    if(user.points == 0) return 403;
+    user.points -= Number(points);
+    if(user.points <= 0) {
+        user.points = 0;
+    }
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return user.points;
+}
+
+function increaseHP(playerID, hp) {
+    if (typeof playerID !== 'string') {
+        throw new Error('playerID must be a string');
+    }
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    if(user.hp == 0) return 403;
+    user.hp += Number(hp);
+
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return user.hp;
+}
+
+function increaseDEF(playerID, def) {
+    if (typeof playerID !== 'string') {
+        throw new Error('playerID must be a string');
+    }
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    if(user.def == 0) return 403;
+    user.def += Number(def);
+
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return user.def;
+}
+
+function increaseATK(playerID, atk) {
+    if (typeof playerID !== 'string') {
+        throw new Error('playerID must be a string');
+    }
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    if(user.atk == 0) return 403;
+    user.atk += Number(atk);
+
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return user.atk;
+}
+
+function increaseSPD(playerID, spd) {
+    if (typeof playerID !== 'string') {
+        throw new Error('playerID must be a string');
+    }
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    if(user.spd == 0) return 403;
+    user.spd += Number(spd);
+
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return user.spd;
 }
 
 function increaseDurability(playerID, durability) {
@@ -115,14 +205,17 @@ async function setExp(playerID, exp, api, threadID) {
     if(!user) return 404;
     user.exp += exp;
     var expNeeded = 500 * Math.pow(1.2, user.level - 1)
+    if(user.exp <= 0) {
+        user.the_luc = 0;
+    }
     if(user.exp >= expNeeded) {
-        user.level += Math.floor(user.exp / expNeeded);
+        user.level += Math.floor((user.exp / expNeeded) + 1 - (user.exp / expNeeded));
         user.exp = user.exp % expNeeded;
-        user.the_luc += 100;
-        user.atk += 20 * user.level;
-        user.def += 20 * user.level;
-        user.hp += 100 * user.level;
-        user.spd += 10 * user.level;
+        user.atk += 2 * user.level;
+        user.def += 2 * user.level;
+        user.hp += 5 * user.level;
+        user.spd += 1 * user.level;
+        user.points += 500 * user.level;
         var stream = await axios(global.configMonster.levelUp, { responseType: 'stream' });
         api.sendMessage({body: `Chúc mừng ${user.name} đã lên level ${user.level}`, attachment: stream.data}, threadID);
     }
@@ -140,6 +233,15 @@ function addMonster(playerID, monster) {
     return true;
 }
 
+function addHistory(playerID, history) {
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    user.history.push(history);
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return true;
+}
+
 function decreaseHealthWeapon(playerID, amount) {
     var user = game.getDataUser(playerID);
     if(!user) return 404;
@@ -150,12 +252,31 @@ function decreaseHealthWeapon(playerID, amount) {
     if(user.the_luc <= 0) {
         user.the_luc = 0;
     }
+   if(user.weapon.HP < 0) {
+        user.weapon.HP = 0;
+    }
     if(user.weapon.HP <= 0) {
         user.weapon = null;
     }
     fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
     
     return true;
+}
+
+function karmaUp(playerID) {
+    if (typeof playerID !== 'string') {
+        throw new Error('playerID must be a string');
+    }
+    var user = game.getDataUser(playerID);
+    if(!user) return 404;
+    user.karma += 1;
+    if(user.karma < 0) {
+        user.karma = 0;
+    }
+    
+    fs.writeFileSync(__dirname + "/data/datauser.json", JSON.stringify(dataUser, null, 4));
+    
+    return user.karma;
 }
 
 module.exports = {
@@ -167,5 +288,12 @@ module.exports = {
     setLocation,
     setExp,
     addMonster,
-    decreaseHealthWeapon
+    decreaseHealthWeapon,
+    increaseHP,
+    increaseDEF,
+    increaseATK,
+    increaseSPD,
+    decreasePoints,
+    addHistory,
+    karmaUp
 };

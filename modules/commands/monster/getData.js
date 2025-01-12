@@ -22,6 +22,24 @@ function getMonster(locationID) {
     return undefined;
 }
 
+function getMinLevel(locationID) {
+    if(dataMonster.find(location => location.ID == locationID))
+        return (dataMonster.find(location => location.ID == locationID)).minLevel;
+    return undefined;
+}
+
+function getMaxLevel(locationID) {
+    if(dataMonster.find(location => location.ID == locationID))
+        return (dataMonster.find(location => location.ID == locationID)).maxLevel;
+    return undefined;
+}
+
+function getLocationLevel(locationID) {
+    if(dataMonster.find(location => location.ID == locationID))
+        return (dataMonster.find(location => location.ID == locationID)).level;
+    return undefined;
+}
+
 async function getImgMonster(monster, path) {
     var url = monster.image;
     var fs = require('fs-extra');
@@ -43,5 +61,8 @@ module.exports = {
     getDataUser,
     getItems,
     getMonster,
-    getImgMonster
+    getImgMonster,
+    getMinLevel,
+    getMaxLevel,
+    getLocationLevel
 };

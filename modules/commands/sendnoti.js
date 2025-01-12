@@ -1,12 +1,12 @@
 module.exports.config = {
-    "name": "sendnoti",
-    "version": "1.1.1",
-    "hasPermssion": 2,
-    "credits": "Niiozic",
-    "description": "Gửi tin nhắn đến tất cả nhóm và reply để phản hồi",
-    "commandCategory": "Admin",
-    "usages": "[ Nội dung ]",
-    "cooldowns": 0
+    name: "sendnoti",
+    version: "1.1.1",
+    hasPermssion: 3,
+    credits: "N1002",
+    description: "Gửi tin nhắn đến tất cả nhóm và reply để phản hồi",
+    commandCategory: "Hệ Thống",
+    usages: "sendnoti [text]",
+    cooldowns: 2
 };
 request = require("request");
 fse = require("fs-extra");
@@ -18,9 +18,9 @@ module.exports.run = async({ api,
     const { threadID: tid, messageID: mid, senderID: sid, attachments: atms, messageReply: mR, type, body, args } = event; 
     const allTid = global.data.allThreadID || [];
     const atm = await type == "message_reply" ? mR.attachments : atms.length != 0 ? atms : "nofile";
-    const content = !args[1] ? "chỉ có tệp" : body.slice(body.indexOf(args[1]));
-    if (!args[1] && atm == "nofile") return api.sendMessage(`⚠️ Vui lòng sử dụng như sau:\n${global.config.PREFIX}sendnoti + ND cần gửi\nVí Dụ: ${global.config.PREFIX}sendnoti Alo`, tid, mid);
-    var msg = `[ Thông Báo Admin ]\n\n👤 Từ Admin: ${(await Users.getData(sid)).name}\n🔗 Link: https://www.facebook.com/profile.php?id=${event.senderID}\n🏘️ Nơi gửi: ${event.isGroup == true ? 'Nhóm ' + global.data.threadInfo.get(event.threadID).threadName: 'từ cuộc trò chuyện riêng với bot '}\n⏰ Time: ${fullTime()}\n📝 Nội dung: ${content}\n\n📌 Reply tin nhắn này để phản hồi`
+    const content = !args[1] ? "𝑐ℎ𝑖̉ 𝑐𝑜́ 𝑡𝑒̣̂𝑝" : body.slice(body.indexOf(args[1]));
+    if (!args[1] && atm == "nofile") return api.sendMessage(`==== 『 𝐄𝐑𝐎𝐋 』 ==== \n▱▱▱▱▱▱▱▱▱▱▱▱▱\n→ 𝐵𝑎̣𝑛 𝑐ℎ𝑢̛𝑎 𝑛ℎ𝑎̣̂𝑝 𝑛𝑜̣̂𝑖 𝑑𝑢𝑛𝑔\n▱▱▱▱▱▱▱▱▱▱▱▱▱\n=== 「${thu} || ${gio}」 ===`, tid, mid);
+    var msg = `[📢]→ 𝑇ℎ𝑜̂𝑛𝑔 𝑏𝑎́𝑜 𝑡𝑢̛̀ 𝐴𝑑𝑚𝑖𝑛: ${(await Users.getData(sid)).name}\n[⏱]→ 𝑇𝑖𝑚𝑒: ${fullTime()}\n[📝]→ 𝑁𝑜̣̂𝑖 𝑑𝑢𝑛𝑔: ${content}\n\n → 𝑅𝑒𝑝𝑙𝑦 đ𝑒̂̉ 𝑝ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 𝑙𝑎̣𝑖 𝐴𝑑𝑚𝑖𝑛.`
     const uwu = atm == "nofile" ? msg : {
         body: msg,
         attachment: await DownLoad(atm)
@@ -39,15 +39,15 @@ var c1 = 0, c2 = 0;
       });
     })
   }
-promise.then(async(r) => api.sendMessage(`✅ Gửi thông báo thành công đến tất cả nhóm`, tid, mid)).catch(async(err) => api.sendMessage(`⚠️ Không thể gửi thông báo đến ${err} nhóm`, tid, mid))
+promise.then(async(r) => api.sendMessage(`[✅]→ Đ𝑎̃ 𝑔𝑢̛̉𝑖 𝑡ℎ𝑜̂𝑛𝑔 𝑏𝑎́𝑜 đ𝑒̂́𝑛 ${r} 𝑛ℎ𝑜́𝑚`, tid, mid)).catch(async(err) => api.sendMessage(`[❌]→ 𝐾ℎ𝑜̂𝑛𝑔 𝑡ℎ𝑒̂̉ 𝑔𝑢̛̉𝑖 𝑡ℎ𝑜̂𝑛𝑔 𝑏𝑎́𝑜 đ𝑒̂́𝑛 ${err} 𝑛ℎ𝑜́𝑚`, tid, mid))
 };
 module.exports.handleReply = async({ api, event, handleReply: h, Users, Threads }) => {
     const { threadID: tid, messageID: mid, senderID: sid, attachments: atms, body, type } = event;
-    const { ADMINBOT } = global.config; 
+    const { ADMINBOT } = global.config;
     switch (h.type) {
         case "userReply": {
             const atm = atms.length != 0 ? atms : "nofile";
-            var msg = `📩 Phản hồi từ user: ${(await Users.getData(sid)).name}\n🏘️ Nhóm: ${(await Threads.getData(tid)).threadInfo.threadName}\n⏰ Time: ${fullTime()}\n\n📝 Nội dung: ${atm == "nofile" ? body : "Chỉ có tệp được gửi cho bạn"}\n\n📌 Reply tin nhắn này để phản hồi lại user`
+            var msg = `[📩]→ 𝑃ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 𝑡𝑢̛̀ 𝑈𝑠𝑒𝑟 ${(await Users.getData(sid)).name}\n[🔎]→ 𝑁ℎ𝑜́𝑚: ${(await Threads.getData(tid)).threadInfo.threadName}\n[⏱] 𝑇𝑖𝑚𝑒: ${fullTime()}\n[📝]→ 𝑁𝑜̣̂𝑖 𝑑𝑢𝑛𝑔: ${atm == "nofile" ? body : "𝐶ℎ𝑖̉ 𝑐𝑜́ 𝑡𝑒̣̂𝑝 đ𝑒̂́𝑛 𝑏𝑎̣𝑛"}\n\n→ 𝑅𝑒𝑝𝑙𝑦 đ𝑒̂̉ 𝑝ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 𝑙𝑎̣𝑖 𝑢𝑠𝑒𝑟.`
             const uwu = atm == "nofile" ? msg : {
                 body: msg,
                 attachment: await DownLoad(atm)
@@ -66,19 +66,19 @@ module.exports.handleReply = async({ api, event, handleReply: h, Users, Threads 
                 });
             });
        }; 
-          promise.then(async(r1) => api.sendMessage(`✅ Phản hồi thành công đến ${(await Users.getData(h.author)).name} và ${+r1-1} Admin khác`, tid, mid)).catch(async(err) => api.sendMessage(`⚠️ Không thể phản hồi đến ${err} Admin khác`, tid, mid))
+          promise.then(async(r1) => api.sendMessage(`[📨]→ Đ𝑎̃ 𝑝ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 đ𝑒̂́𝑛 𝐴𝑑𝑚𝑖𝑛 ${(await Users.getData(h.author)).name} 𝑣𝑎̀ ${+r1-1} 𝐴𝑑𝑚𝑖𝑛 𝑘ℎ𝑎́𝑐`, tid, mid)).catch(async(err) => api.sendMessage(`[❌]→ 𝐾ℎ𝑜̂𝑛𝑔 𝑡ℎ𝑒̂̉ 𝑝ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 đ𝑒̂́𝑛 ${err} 𝐴𝑑𝑚𝑖𝑛`, tid, mid))
             break;
         };
     case "adminReply": {
         const atm = atms.length != 0 ? atms : "nofile";
-        var msg = `📩 Phản hồi từ Admin ${(await Users.getData(sid)).name}\n⏰ Time: ${fullTime()}\n\n📝 Nội dung: ${atm == "nofile" ? body : "Chỉ có tệp được gửi cho bạn"}\n\n📌 reply tin nhắn này để phản hồi lại Admin`
+        var msg = `[📩]→ 𝑃ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 𝑡𝑢̛̀ 𝐴𝑑𝑚𝑖𝑛 ${(await Users.getData(sid)).name}\n[⏱]→ 𝑇𝑖𝑚𝑒: ${fullTime()}\n[📝]→ 𝑁𝑜̣̂𝑖 𝑑𝑢𝑛𝑔: ${atm == "nofile" ? body : "𝐶ℎ𝑖̉ 𝑐𝑜́ 𝑡𝑒̣̂𝑝 đ𝑒̂́𝑛 𝑏𝑎̣𝑛"}\n\n[👉]→ 𝑅𝑒𝑝𝑙𝑦 đ𝑒̂̉ 𝑝ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 𝑙𝑎̣𝑖 𝐴𝑑𝑚𝑖𝑛.`
         const uwu = atm == "nofile" ? msg : {
             body: msg,
             attachment: await DownLoad(atm)
         };
         await api.sendMessage(uwu, h.idThread, async(e, i) => {
             if (e) return api.sendMessage(`Error`, tid, mid);
-            else api.sendMessage(`✅ Phản hồi thành công đến user ${(await Users.getData(h.idUser)).name} tại nhóm ${(await Threads.getData(h.idThread)).threadInfo.threadName}`, tid, mid)
+            else api.sendMessage(`[📨]→ Đ𝑎̃ 𝑝ℎ𝑎̉𝑛 ℎ𝑜̂̀𝑖 đ𝑒̂́𝑛 𝑈𝑠𝑒𝑟 ${(await Users.getData(h.idUser)).name} 𝑡𝑎̣𝑖 𝑛ℎ𝑜́𝑚 ${(await Threads.getData(h.idThread)).threadInfo.threadName}`, tid, mid)
             return global.client.handleReply.push({
                 name: this.config.name,
                 messageID: i.messageID,
